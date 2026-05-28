@@ -9,8 +9,8 @@ class Square:
         self.size = None
 
 class Board:
-    __init__(self, WIDTH, HEIGHT):
-        self.board = create_board(WIDTH, HEIGHT)
+    __init__(self, WIDTH):
+        self.board = create_board(WIDTH)
  
 
 
@@ -24,5 +24,6 @@ class Board:
                     square.colour = (245, 245, 229) # Light 
                 else 
                     square.colour = (139, 69, 19) # Dark
+                square.size = WIDTH // 8
         return board
 
