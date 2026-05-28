@@ -1,35 +1,28 @@
+import pygame
 from piece import Piece
+
 class Square:
     __init__(self):
-        self.row_coordinate = None
-        self.column_coordinate = None
+        self.x = None
+        self.y = None
         self.colour = None
+        self.size = None
 
 class Board:
-    __init__(self):
-        self.board = create_board(self)
-    
-    def paint_board(board):
-        for row in board:
-            if row[0].row_coordinate % 2 = 0:
-                row[0:2:4:6].colour = 0
-                row[1:3:5:7].colour = 1
-            else:
-                row[0:2:4:6].colour = 1
-                row[1:3:5:7].colour = 0
-            
+    __init__(self, WIDTH, HEIGHT):
+        self.board = create_board(WIDTH, HEIGHT)
+ 
 
 
-    def create_board(self):
-        board = []
-        for letter in range(ord('A'), ord('Z') + 1):
-            row = []
-            for number in range(1, 8):
+    def create_board(width, height):
+        for x in range(8):
+            for y in range(8):
                 square = Square()
-                square.row_coordinate = number
-                square.column_coordinate = letter
-                row.append(square)
-            board.append(row)
-        paint_board(board)
+                square.x = x
+                square.y = y
+                if (x + y) %2 == 0:
+                    square.colour = (245, 245, 229) # Light 
+                else 
+                    square.colour = (139, 69, 19) # Dark
         return board
 
