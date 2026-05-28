@@ -1,5 +1,5 @@
 class Piece:
-    __init__(self):
+    def __init__(self):
         self.square = [None, None]
         self.color = None
         self.sprite = None

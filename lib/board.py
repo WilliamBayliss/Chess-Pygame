@@ -2,14 +2,14 @@ import pygame
 from piece import Piece
 
 class Square:
-    __init__(self):
+    def __init__(self):
         self.x = None
         self.y = None
         self.colour = None
         self.size = None
 
 class Board:
-    __init__(self, WIDTH):
+    def __init__(self, WIDTH):
         self.board = create_board(WIDTH)
  
 
