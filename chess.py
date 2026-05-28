@@ -1,4 +1,7 @@
 import pygame
+from lib.board import Board
+from lib.piece import Piece
+from lib.player import Player
 
 pygame.init()
 
