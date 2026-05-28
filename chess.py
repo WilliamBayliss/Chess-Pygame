@@ -1,7 +1,7 @@
 import pygame
 import lib
 pygame.init()
-WIDTH, HEIGHT = 400, 400
+WIDTH, HEIGHT = 1200, 1200
 class Player:
     def __init__(self):
         self.colour = None
@@ -14,24 +14,27 @@ class Square:
         self.colour = None
         self.size = None
 
-        return self
-
 class Board:
-    def __init__(self, WIDTH):
-        self.board = create_board(WIDTH)
-        def create_board(width, height):
+    def __init__(self):
+        self.grid = self.create_board()
+
+    def create_board(self):
+        board = []
         for x in range(8):
+            row = []
             for y in range(8):
                 square = Square()
                 square.x = x
                 square.y = y
-                if (x + y) %2 == 0:
+                if (x + y) % 2 == 0:
                     square.colour = (245, 245, 229) # Light 
                 else:
                     square.colour = (139, 69, 19) # Dark
                 square.size = WIDTH // 8
+                row.append(square)
+            board.append(row)
         return board
-        
+
 class Piece:
     def __init__(self):
         self.square = [None, None]
@@ -47,21 +50,25 @@ class Piece:
 
 
 
-screen = pygame.display.set_caption("Chessboard")
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Chessboard")
 
-def draw_board(WIDTH):
-    board = lib.board.Board(WIDTH)
-    for row in board:
+def draw_board():
+    board = Board()
+    for row in board.grid:
+        row_index = board.grid.index(row)
         for square in row:
-            pygame.draw.rect(screen, square.colour, row *square.size, square * square.size, square.size, square.size)
+            col_index = row.index(square)
+            pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size))
 
+# Main loop
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
     
-    draw_board(WIDTH)
+    draw_board()
     pygame.display.flip()
 
 pygame.quit()
