@@ -80,7 +80,7 @@ def draw_board():
     pygame.display.set_caption("Chessboard")
     return board
 
-def create_colour_selection():
+def create_colour_selection(colour):
     mouse = pygame.mouse.get_pos()
     prompt_surface = font.render("Choose your side:" + "", True, DARK)
     screen.blit(prompt_surface, (450, 200))
@@ -94,21 +94,30 @@ def create_colour_selection():
     # Borders for current selection highlight
     pygame.draw.rect(screen, ACTIVE_COLOUR if white_selection_square.collidepoint(mouse) else WHITE, white_selection_square, 2)
     pygame.draw.rect(screen, ACTIVE_COLOUR if black_selection_square.collidepoint(mouse) else BLACK, black_selection_square, 2)
+    
+
+    selection_surface = font.render("Selection: " + f"{colour}", True, DARK) if colour is not None else font.render("Selection: ", True, DARK)
+    screen.blit(selection_surface, (450, 250))
+
     return [white_selection_square, black_selection_square]
 
-def create_style_selection():
+def create_style_selection(style):
     mouse = pygame.mouse.get_pos()
-    prompt_surface = font.render("Choose your Style:" + "", True, DARK)
+    prompt_surface = font.render("Choose your piece style.", True, DARK)
     screen.blit(prompt_surface, (450, 600))
+    classic_button = pygame.Rect(300, 690, 100, 100)
 
-    classic_button = pygame.Rect(300, 630, 100, 100)
-
-    # Buttons
+    # Draw buttons
     pygame.draw.rect(screen, WHITE, classic_button)
 
-    # Borders for current highlight selection
+    # Draw borders for current highlight selection
     pygame.draw.rect(screen, ACTIVE_COLOUR if classic_button.collidepoint(mouse) else WHITE, classic_button, 2)
 
+    # Selection choice display
+    selection_surface = font.render("Selection: " + f"{style}", True, DARK) if style is not None else font.render("Selection: ", True, DARK)
+    screen.blit(selection_surface, (450, 650))
+
+    
     return [classic_button]
 
 def create_menu_buttons():
@@ -122,11 +131,7 @@ def create_menu_buttons():
     screen.blit(start_text, start_button.center)
     screen.blit(exit_text, exit_button.center)
 
-    return [start_button, exit_button]
-
-def create_selection_indicators():
-    colour_selection = None
-    style_selection = None
+    return [start_button, exit_button] 
 
 def start_menu_validator(colour, style):
     if colour is not None:
@@ -146,15 +151,14 @@ def start_menu():
 
         # Colour Selection
         
-        colour_selection_buttons = create_colour_selection()
+        colour_selection_buttons = create_colour_selection(player.colour)
         white_button = colour_selection_buttons[0]
         black_button = colour_selection_buttons[1]
 
         # Style Selection
-        style_buttons = create_style_selection()
+        style_buttons = create_style_selection(player.style)
         classic_button = style_buttons[0]
 
-        # Selection indicators
 
 
         # Menu Buttons
@@ -185,11 +189,11 @@ def start_menu():
                     if exit_button.collidepoint(mouse):
                         pygame.quit()
                     if white_button.collidepoint(mouse):
-                        player.colour = 0
+                        player.colour = "Light"
                     if black_button.collidepoint(mouse):
-                        player.colour = 1
+                        player.colour = "Dark"
                     if classic_button.collidepoint(mouse):
-                        player.style = "classic"
+                        player.style = "Classic"
 
 
         pygame.display.update()
