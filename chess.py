@@ -9,6 +9,7 @@ DARK = (139, 69, 19)
 
 GRAY = (150, 150, 150)
 ACTIVE_COLOUR = (0, 200, 0) # GREEN
+CANCEL_COLOUR = (200, 0, 0) # RED
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 
@@ -95,12 +96,15 @@ def create_colour_selection():
     pygame.draw.rect(screen, ACTIVE_COLOUR if black_selection_square.collidepoint(mouse) else BLACK, black_selection_square, 2)
     return [white_selection_square, black_selection_square]
 
+def create_style_selection():
+    return
+
 def create_menu_buttons():
     mouse = pygame.mouse.get_pos()
     start_button = pygame.Rect(350, 900, 140, 50)
     exit_button = pygame.Rect(650, 900, 140, 50)
-    pygame.draw.rect(screen, LIGHT if start_button.collidepoint(mouse) else DARK, start_button)
-    pygame.draw.rect(screen, LIGHT if exit_button.collidepoint(mouse) else DARK, exit_button)
+    pygame.draw.rect(screen, ACTIVE_COLOUR if start_button.collidepoint(mouse) else LIGHT, start_button)
+    pygame.draw.rect(screen, CANCEL_COLOUR if exit_button.collidepoint(mouse) else DARK, exit_button)
     start_text = font.render("Start", True, LIGHT)
     exit_text = font.render("Exit", True, LIGHT)
     screen.blit(start_text, (385, 905))
@@ -130,6 +134,16 @@ def start_menu():
 
         # Style Selection
         player_style = None
+        prompt_surface = font.render("Choose your Style:" + "", True, DARK)
+        screen.blit(prompt_surface, (450, 600))
+
+        classic_button = pygame.Rect(300, 630, 100, 100)
+
+        # Buttons
+        pygame.draw.rect(screen, WHITE, classic_button)
+
+        # Borders for current highlight selection
+        pygame.draw.rect(screen, ACTIVE_COLOUR if classic_button.collidepoint(mouse) else WHITE, classic_button, 2)
 
         # Menu Buttons
         menu_buttons = create_menu_buttons()
@@ -162,6 +176,8 @@ def start_menu():
                         player_colour = 0
                     elif black_button.collidepoint(mouse):
                         player_colour = 1
+                    elif classic_button.collidepoint(mouse):
+                        player_style = "01"
 
 
         pygame.display.update()
