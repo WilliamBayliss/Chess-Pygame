@@ -145,8 +145,7 @@ def start_menu_validator(colour, style):
 
 def start_menu():
     player = Player()
-    getting_player_info = True
-    while getting_player_info == True:
+    while True:
         screen.fill(LIGHT)
         mouse = pygame.mouse.get_pos()
 
@@ -179,9 +178,7 @@ def start_menu():
                         case pygame.K_BACKSPACE:
                             player_name = player_name[:-1]
                         case pygame.K_RETURN:
-                            if start_menu_validator(player_colour, player_style):
-                                player.colour = player_colour
-                                player.style = player_style
+                            if start_menu_validator(player.colour, player.style):
                                 game()
                         case _:
                             player_name += event.unicode
