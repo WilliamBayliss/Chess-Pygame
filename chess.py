@@ -39,6 +39,8 @@ class Board:
 
 class Piece:
     def __init__(self):
+        self.player = None
+        self.value = None
         self.square = [None, None]
         self.colour = None
         self.sprite = None
@@ -47,6 +49,12 @@ class Piece:
 
     def set_colour(self, player):
         self.colour = player.colour
+        self.player = player
+
+    def set_sprite(self):
+
+
+
 
 
 
