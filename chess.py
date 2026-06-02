@@ -18,6 +18,8 @@ class Board:
     def __init__(self):
         self.grid = self.create_board()
 
+    # Create 2D array with 8 subarrays each having 8 instances of Square class; set Square properties
+    # Sets Square colour using sum of coordinates modulo 2: if remainder 0 Squares are light coloured
     def create_board(self):
         board = []
         for x in range(8):
@@ -53,6 +55,7 @@ class Piece:
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Chessboard")
 
+# Create instance of board class and draw board on screen
 def draw_board():
     board = Board()
     for row in board.grid:
