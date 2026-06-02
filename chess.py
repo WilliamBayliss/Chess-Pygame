@@ -97,7 +97,16 @@ def create_colour_selection():
     return [white_selection_square, black_selection_square]
 
 def create_style_selection():
-    return
+    prompt_surface = font.render("Choose your Style:" + "", True, DARK)
+    screen.blit(prompt_surface, (450, 600))
+
+    classic_button = pygame.Rect(300, 630, 100, 100)
+
+    # Buttons
+    pygame.draw.rect(screen, WHITE, classic_button)
+
+    # Borders for current highlight selection
+    pygame.draw.rect(screen, ACTIVE_COLOUR if classic_button.collidepoint(mouse) else WHITE, classic_button, 2)
 
 def create_menu_buttons():
     mouse = pygame.mouse.get_pos()
@@ -134,16 +143,7 @@ def start_menu():
 
         # Style Selection
         player_style = None
-        prompt_surface = font.render("Choose your Style:" + "", True, DARK)
-        screen.blit(prompt_surface, (450, 600))
 
-        classic_button = pygame.Rect(300, 630, 100, 100)
-
-        # Buttons
-        pygame.draw.rect(screen, WHITE, classic_button)
-
-        # Borders for current highlight selection
-        pygame.draw.rect(screen, ACTIVE_COLOUR if classic_button.collidepoint(mouse) else WHITE, classic_button, 2)
 
         # Menu Buttons
         menu_buttons = create_menu_buttons()
