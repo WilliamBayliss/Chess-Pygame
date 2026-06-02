@@ -130,16 +130,11 @@ def create_selection_indicators():
 
 def start_menu_validator(colour, style):
     if colour is not None:
-        print("YES")
         if style is not None:
-            print("YES")
             return True
         else:
-            print("WRONG - STYLE")
             return False
     else:
-        print("WRONG - COLOUR")
-        print(colour)
         return False
 
 
