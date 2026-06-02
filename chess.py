@@ -7,9 +7,10 @@ WIDTH, HEIGHT = 1200, 1200
 LIGHT = (245, 245, 229)
 DARK = (139, 69, 19)
 
-GREY = (150, 150, 150)
+GRAY = (150, 150, 150)
 ACTIVE_COLOUR = (0, 200, 0) # GREEN
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
 
 # Initialize pygame globals
 pygame.init()
@@ -78,15 +79,34 @@ def draw_board():
     pygame.display.set_caption("Chessboard")
     return board
 
+def create_colour_selection():
+    mouse = pygame.mouse.get_pos()
+    prompt_surface = font.render("Choose your side:" + "", True, DARK)
+    screen.blit(prompt_surface, (450, 200))
+    white_selection_square = pygame.Rect(300, 300, 200, 200)
+    black_selection_square = pygame.Rect(700, 300, 200, 200)
+
+    # Squares
+    pygame.draw.rect(screen, WHITE, white_selection_square)
+    pygame.draw.rect(screen, BLACK, black_selection_square)
+
+    # Borders for current selection highlight
+    pygame.draw.rect(screen, ACTIVE_COLOUR if white_selection_square.collidepoint(mouse) else WHITE, white_selection_square, 2)
+    pygame.draw.rect(screen, ACTIVE_COLOUR if black_selection_square.collidepoint(mouse) else BLACK, black_selection_square, 2)
+    return [white_selection_square, black_selection_square]
+
 def create_menu_buttons():
+    mouse = pygame.mouse.get_pos()
     start_button = pygame.Rect(350, 900, 140, 50)
     exit_button = pygame.Rect(650, 900, 140, 50)
-    pygame.draw.rect(screen, LIGHT if start_button.collidepoint(pygame.mouse.get_pos()) else DARK, start_button)
-    pygame.draw.rect(screen, LIGHT if exit_button.collidepoint(pygame.mouse.get_pos()) else DARK, exit_button)
+    pygame.draw.rect(screen, LIGHT if start_button.collidepoint(mouse) else DARK, start_button)
+    pygame.draw.rect(screen, LIGHT if exit_button.collidepoint(mouse) else DARK, exit_button)
     start_text = font.render("Start", True, LIGHT)
     exit_text = font.render("Exit", True, LIGHT)
     screen.blit(start_text, (385, 905))
     screen.blit(exit_text, (685, 905))
+
+    return [start_button, exit_button]
 
 def start_menu_validator(name, colour, style):
     if len(name) > 0:
@@ -104,13 +124,17 @@ def start_menu():
 
         # Colour Selection
         player_colour = None
+        colour_selection_buttons = create_colour_selection()
+        white_button = colour_selection_buttons[0]
+        black_button = colour_selection_buttons[1]
 
         # Style Selection
         player_style = None
 
         # Menu Buttons
-        create_menu_buttons()
-
+        menu_buttons = create_menu_buttons()
+        start_button = menu_buttons[0]
+        exit_button = menu_buttons[1]
         # Handle start menu user inputs
         for event in pygame.event.get():
             match event.type:
@@ -134,8 +158,11 @@ def start_menu():
                             game()
                     elif exit_button.collidepoint(mouse):
                         pygame.quit()
-                    elif input_rect.collidepoint(mouse):
-                        name_input_active = True
+                    elif white_button.collidepoint(mouse):
+                        player_colour = 0
+                    elif black_button.collidepoint(mouse):
+                        player_colour = 1
+
 
         pygame.display.update()
 
