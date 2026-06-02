@@ -1,4 +1,5 @@
 import pygame
+import os
 import lib
 pygame.init()
 WIDTH, HEIGHT = 1200, 1200
@@ -47,13 +48,6 @@ class Piece:
         self.moved = False
         self.available_moves = None
 
-    def set_colour(self, player):
-        self.colour = player.colour
-        self.player = player
-
-    def set_sprite(self):
-
-
 
 
 
@@ -73,7 +67,7 @@ def draw_board():
         row_index = board.grid.index(row)
         for square in row:
             col_index = row.index(square)
-            pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size))
+            pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size)) 
 
 # Main loop
 running = True
