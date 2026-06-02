@@ -69,6 +69,7 @@ def draw_board():
             col_index = row.index(square)
             pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size)) 
     pygame.display.set_caption("Chessboard")
+    return board
 
 def get_player_name():
     name = ""
@@ -103,8 +104,8 @@ def start_menu():
         screen.fill(LIGHT)
         mouse = pygame.mouse.get_pos()
 
-        start_button = pygame.Rect(300, 300, 140, 50)
-        exit_button = pygame.Rect(300, 380, 140, 50)
+        start_button = pygame.Rect(350, 900, 140, 50)
+        exit_button = pygame.Rect(650, 900, 140, 50)
 
         pygame.draw.rect(screen, LIGHT if start_button.collidepoint(mouse) else DARK, start_button)
         pygame.draw.rect(screen, LIGHT if exit_button.collidepoint(mouse) else DARK, exit_button)
@@ -112,8 +113,8 @@ def start_menu():
         start_text = font.render("Start", True, LIGHT)
         exit_text = font.render("Exit", True, LIGHT)
 
-        screen.blit(start_text, (335, 305))
-        screen.blit(exit_text, (335, 385))
+        screen.blit(start_text, (385, 905))
+        screen.blit(exit_text, (685, 905))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -131,7 +132,7 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        draw_board()
+        board = draw_board()
         pygame.display.update()
 
     pygame.quit()
