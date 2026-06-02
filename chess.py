@@ -1,10 +1,17 @@
 import pygame
 import os
 import lib
-#Initialize
+
+# Global Vars
 WIDTH, HEIGHT = 1200, 1200
 LIGHT = (245, 245, 229)
 DARK = (139, 69, 19)
+
+GREY = (150, 150, 150)
+ACTIVE_COLOUR = (0, 200, 0) # GREEN
+WHITE = (255, 255, 255)
+
+# Initialize pygame globals
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Welcome to Chess!")
@@ -16,7 +23,7 @@ font = pygame.font.Font(None, 50)
 class Player:
     def __init__(self):
         self.colour = None
-        self.name = None
+        self.style = None
 
 class Square:
     def __init__(self):
@@ -71,59 +78,65 @@ def draw_board():
     pygame.display.set_caption("Chessboard")
     return board
 
-def get_player_name():
-    name = ""
-    getting_name = True
+def create_menu_buttons():
+    start_button = pygame.Rect(350, 900, 140, 50)
+    exit_button = pygame.Rect(650, 900, 140, 50)
+    pygame.draw.rect(screen, LIGHT if start_button.collidepoint(pygame.mouse.get_pos()) else DARK, start_button)
+    pygame.draw.rect(screen, LIGHT if exit_button.collidepoint(pygame.mouse.get_pos()) else DARK, exit_button)
+    start_text = font.render("Start", True, LIGHT)
+    exit_text = font.render("Exit", True, LIGHT)
+    screen.blit(start_text, (385, 905))
+    screen.blit(exit_text, (685, 905))
 
-    while getting_name:
-        screen.fill((40, 40, 40)) # Dark gray window for name selection
-        prompt_surface = font.render("Enter your name:" + "|", True, (0, 255, 0))
-        screen.blit(prompt_surface, (100, 200))
-
-        #Event tracking loop
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit()
-            
-            # Handle user keyboard input
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN: # Stop when user presses enter
-                    getting_name = False
-                elif event.key == pygame.K_BACKSPACE: # Remove last Character
-                    name = name["-1"]
-                else:
-                      name += event.unicode 
-
-    return name
+def start_menu_validator(name, colour, style):
+    if len(name) > 0:
+        if colour != None:
+            if style != None:
+                return True
 
 def start_menu():
     player = Player()
 
-    while True:
+    getting_player_info = True
+    while getting_player_info == True:
         screen.fill(LIGHT)
         mouse = pygame.mouse.get_pos()
 
-        start_button = pygame.Rect(350, 900, 140, 50)
-        exit_button = pygame.Rect(650, 900, 140, 50)
+        # Colour Selection
+        player_colour = None
 
-        pygame.draw.rect(screen, LIGHT if start_button.collidepoint(mouse) else DARK, start_button)
-        pygame.draw.rect(screen, LIGHT if exit_button.collidepoint(mouse) else DARK, exit_button)
+        # Style Selection
+        player_style = None
 
-        start_text = font.render("Start", True, LIGHT)
-        exit_text = font.render("Exit", True, LIGHT)
+        # Menu Buttons
+        create_menu_buttons()
 
-        screen.blit(start_text, (385, 905))
-        screen.blit(exit_text, (685, 905))
-
+        # Handle start menu user inputs
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if start_button.collidepoint(mouse):
-                    game()
-                if exit_button.collidepoint(mouse):
+            match event.type:
+                case pygame.QUIT:
                     pygame.quit()
+                case pygame.K_ESCAPE:
+                    pygame.quit()
+                case pygame.KEYDOWN:
+                    match event.key:
+                        case pygame.K_BACKSPACE:
+                            player_name = player_name[:-1]
+                        case pygame.K_RETURN:
+                            if start_menu_validator(player_name, player_colour, player_style):
+                                game()
+                        case _:
+                            player_name += event.unicode
+
+                case pygame.MOUSEBUTTONDOWN:
+                    if start_button.collidepoint(mouse):
+                        if start_menu_validator(player_name, player_colour, player_style):
+                            game()
+                    elif exit_button.collidepoint(mouse):
+                        pygame.quit()
+                    elif input_rect.collidepoint(mouse):
+                        name_input_active = True
+
         pygame.display.update()
 
 def game():
