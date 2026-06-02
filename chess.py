@@ -97,6 +97,7 @@ def create_colour_selection():
     return [white_selection_square, black_selection_square]
 
 def create_style_selection():
+    mouse = pygame.mouse.get_pos()
     prompt_surface = font.render("Choose your Style:" + "", True, DARK)
     screen.blit(prompt_surface, (450, 600))
 
@@ -108,41 +109,58 @@ def create_style_selection():
     # Borders for current highlight selection
     pygame.draw.rect(screen, ACTIVE_COLOUR if classic_button.collidepoint(mouse) else WHITE, classic_button, 2)
 
+    return [classic_button]
+
 def create_menu_buttons():
     mouse = pygame.mouse.get_pos()
-    start_button = pygame.Rect(350, 900, 140, 50)
-    exit_button = pygame.Rect(650, 900, 140, 50)
-    pygame.draw.rect(screen, ACTIVE_COLOUR if start_button.collidepoint(mouse) else LIGHT, start_button)
+    start_button = pygame.Rect(350, 900, 150, 75)
+    exit_button = pygame.Rect(650, 900, 150, 75)
+    pygame.draw.rect(screen, ACTIVE_COLOUR if start_button.collidepoint(mouse) else DARK, start_button)
     pygame.draw.rect(screen, CANCEL_COLOUR if exit_button.collidepoint(mouse) else DARK, exit_button)
     start_text = font.render("Start", True, LIGHT)
     exit_text = font.render("Exit", True, LIGHT)
-    screen.blit(start_text, (385, 905))
-    screen.blit(exit_text, (685, 905))
+    screen.blit(start_text, start_button.center)
+    screen.blit(exit_text, exit_button.center)
 
     return [start_button, exit_button]
 
-def start_menu_validator(name, colour, style):
-    if len(name) > 0:
-        if colour != None:
-            if style != None:
-                return True
+def create_selection_indicators():
+    colour_selection = None
+    style_selection = None
+
+def start_menu_validator(colour, style):
+    if colour is not None:
+        print("YES")
+        if style is not None:
+            print("YES")
+            return True
+        else:
+            print("WRONG - STYLE")
+            return False
+    else:
+        print("WRONG - COLOUR")
+        print(colour)
+        return False
+
 
 def start_menu():
     player = Player()
-
     getting_player_info = True
     while getting_player_info == True:
         screen.fill(LIGHT)
         mouse = pygame.mouse.get_pos()
 
         # Colour Selection
-        player_colour = None
+        
         colour_selection_buttons = create_colour_selection()
         white_button = colour_selection_buttons[0]
         black_button = colour_selection_buttons[1]
 
         # Style Selection
-        player_style = None
+        style_buttons = create_style_selection()
+        classic_button = style_buttons[0]
+
+        # Selection indicators
 
 
         # Menu Buttons
@@ -161,23 +179,25 @@ def start_menu():
                         case pygame.K_BACKSPACE:
                             player_name = player_name[:-1]
                         case pygame.K_RETURN:
-                            if start_menu_validator(player_name, player_colour, player_style):
+                            if start_menu_validator(player_colour, player_style):
+                                player.colour = player_colour
+                                player.style = player_style
                                 game()
                         case _:
                             player_name += event.unicode
 
                 case pygame.MOUSEBUTTONDOWN:
                     if start_button.collidepoint(mouse):
-                        if start_menu_validator(player_name, player_colour, player_style):
+                        if start_menu_validator(player.colour, player.style):
                             game()
-                    elif exit_button.collidepoint(mouse):
+                    if exit_button.collidepoint(mouse):
                         pygame.quit()
-                    elif white_button.collidepoint(mouse):
-                        player_colour = 0
-                    elif black_button.collidepoint(mouse):
-                        player_colour = 1
-                    elif classic_button.collidepoint(mouse):
-                        player_style = "01"
+                    if white_button.collidepoint(mouse):
+                        player.colour = 0
+                    if black_button.collidepoint(mouse):
+                        player.colour = 1
+                    if classic_button.collidepoint(mouse):
+                        player.style = "classic"
 
 
         pygame.display.update()
