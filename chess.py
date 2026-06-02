@@ -1,8 +1,18 @@
 import pygame
 import os
 import lib
-pygame.init()
+#Initialize
 WIDTH, HEIGHT = 1200, 1200
+LIGHT = (245, 245, 229)
+DARK = (139, 69, 19)
+pygame.init()
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Welcome to Chess!")
+font = pygame.font.Font(None, 50)
+
+
+#Classes --------------------------------------------------------------------------------------------------------------------
+
 class Player:
     def __init__(self):
         self.colour = None
@@ -30,9 +40,9 @@ class Board:
                 square.x = x
                 square.y = y
                 if (x + y) % 2 == 0:
-                    square.colour = (245, 245, 229) # Light 
+                    square.colour = LIGHT 
                 else:
-                    square.colour = (139, 69, 19) # Dark
+                    square.colour = DARK
                 square.size = WIDTH // 8
                 row.append(square)
             board.append(row)
@@ -48,17 +58,7 @@ class Piece:
         self.moved = False
         self.available_moves = None
 
-
-
-
-
-
-
-
-
-
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Chessboard")
+#MAIN FUNCTIONS ----------------------------------------------------------------------------------------------------------
 
 # Create instance of board class and draw board on screen
 def draw_board():
@@ -68,15 +68,72 @@ def draw_board():
         for square in row:
             col_index = row.index(square)
             pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size)) 
+    pygame.display.set_caption("Chessboard")
 
-# Main loop
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    
-    draw_board()
-    pygame.display.flip()
+def get_player_name():
+    name = ""
+    getting_name = True
 
-pygame.quit()
+    while getting_name:
+        screen.fill((40, 40, 40)) # Dark gray window for name selection
+        prompt_surface = font.render("Enter your name:" + "|", True, (0, 255, 0))
+        screen.blit(prompt_surface, (100, 200))
+
+        #Event tracking loop
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            
+            # Handle user keyboard input
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN: # Stop when user presses enter
+                    getting_name = False
+                elif event.key == pygame.K_BACKSPACE: # Remove last Character
+                    name = name["-1"]
+                else:
+                      name += event.unicode 
+
+    return name
+
+def start_menu():
+    player = Player()
+
+    while True:
+        screen.fill(LIGHT)
+        mouse = pygame.mouse.get_pos()
+
+        start_button = pygame.Rect(300, 300, 140, 50)
+        exit_button = pygame.Rect(300, 380, 140, 50)
+
+        pygame.draw.rect(screen, LIGHT if start_button.collidepoint(mouse) else DARK, start_button)
+        pygame.draw.rect(screen, LIGHT if exit_button.collidepoint(mouse) else DARK, exit_button)
+
+        start_text = font.render("Start", True, LIGHT)
+        exit_text = font.render("Exit", True, LIGHT)
+
+        screen.blit(start_text, (335, 305))
+        screen.blit(exit_text, (335, 385))
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if start_button.collidepoint(mouse):
+                    game()
+                if exit_button.collidepoint(mouse):
+                    pygame.quit()
+        pygame.display.update()
+
+def game():
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        draw_board()
+        pygame.display.update()
+
+    pygame.quit()
+
+start_menu()
