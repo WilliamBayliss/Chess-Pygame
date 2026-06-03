@@ -229,7 +229,7 @@ def start_menu():
                         case pygame.K_BACKSPACE:
                             player_name = player_name[:-1]
                         case pygame.K_RETURN:
-                            if start_menu_validator(player.colour, player.style):
+                            if start_menu_validator(player_colour, player_Sstyle):
                                 start_menu == False
                         case _:
                             player_name += event.unicode
@@ -253,28 +253,6 @@ def start_menu():
     return player
 
 # MAIN FUNCTIONS -----------------------------------------------------------------------------------------
-
-#def create_pieces(player):
-#    pieces = []
-#    for x in range(7):
-#        piece = Piece(player, "Pawn")
-#        pieces.append(piece)
-#    for x in range(2):
-#        piece = Piece(player, "Knight")
-#        pieces.append(piece)
-#    for x in range(2):
-#        piece = Piece(player, "Bishop")
-#        pieces.append(piece)
-#    for x in range(2):
-#        piece = Piece(player, "Rook")
-#        pieces.append(piece)
-#    queen = Piece(player, "Queen")
-#    king = Piece(player, "King")
-#
-#    pieces.extend([queen, king])
-#    return pieces
-
-    
 
 # Create instance of board class and draw board on screen
 def draw_board():
