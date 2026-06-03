@@ -58,8 +58,7 @@ class Square:
 
 class Board:
     def __init__(self):
-        self.grid = self.create_board()
-
+        self.board_data = self.create_board()
     # Create 2D array with 8 subarrays each having 8 instances of Square class; set Square properties
     # Sets Square colour using sum of coordinates modulo 2: if remainder 0 Squares are light coloured
     def create_board(self):
@@ -78,6 +77,19 @@ class Board:
                 row.append(square)
             board.append(row)
         return board
+    
+    def draw_board(self):
+        for row in self.board_data:
+            row_index = self.board_data.index(row)
+            for square in row:
+                col_index = row.index(square)
+                pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size))
+        pygame.display.set_caption("Chessboard")
+
+    def place_pieces():
+        True
+        
+
 
 class Piece:
     def __init__(self, player, name):
@@ -254,17 +266,6 @@ def start_menu():
 
 # MAIN FUNCTIONS -----------------------------------------------------------------------------------------
 
-# Create instance of board class and draw board on screen
-def draw_board():
-    board = Board()
-    for row in board.grid:
-        row_index = board.grid.index(row)
-        for square in row:
-            col_index = row.index(square)
-            pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size)) 
-    pygame.display.set_caption("Chessboard")
-    return board
-
 def game():
     running = True
     while running:
@@ -278,7 +279,8 @@ def game():
 def main():
     player = start_menu()
     player.pieces = player.create_pieces() 
-    board = draw_board()
+    board = Board()
+    board.draw_board()
     game()
 
 main()
