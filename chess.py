@@ -24,9 +24,30 @@ font = pygame.font.Font(None, 50)
 #Classes --------------------------------------------------------------------------------------------------------------------
 
 class Player:
-    def __init__(self):
-        self.colour = None
-        self.style = None
+    def __init__(self, colour=None, style=None):
+        self.colour = None if colour == None else colour 
+        self.style = None if style == None else style
+        self.pieces = self.create_pieces()
+
+    def create_pieces(self):
+        pieces = []
+        for x in range(7):
+            piece = Piece(self, "Pawn")
+            pieces.append(piece)
+        for x in range(2):
+            piece = Piece(self, "Knight")
+            pieces.append(piece)
+        for x in range(2):
+            piece = Piece(self, "Bishop")
+            pieces.append(piece)
+        for x in range(2):
+            piece = Piece(self, "Rook")
+            pieces.append(piece)
+        queen = Piece(self, "Queen")
+        king = Piece(self, "King")
+
+        pieces.extend([queen, king])
+        self.pieces = pieces
 
 class Square:
     def __init__(self):
@@ -165,17 +186,15 @@ def create_menu_buttons():
     return [start_button, exit_button] 
 
 def start_menu_validator(colour, style):
-    if colour is not None:
-        if style is not None:
-            return True
-        else:
-            return False
+    if colour is not None and style is not None:
+        return True
     else:
         return False
 
 # Runs start menu where player can customize their pieces, the board, and the rules of the game
 def start_menu():
-    player = Player()
+    player_colour = None
+    player_style = None
     
     start_menu = True
     while start_menu == True:
@@ -184,12 +203,12 @@ def start_menu():
 
         # Colour Selection
         
-        colour_selection_buttons = create_colour_selection(player.colour)
+        colour_selection_buttons = create_colour_selection(player_colour)
         white_button = colour_selection_buttons[0]
         black_button = colour_selection_buttons[1]
 
         # Style Selection
-        style_buttons = create_style_selection(player.style)
+        style_buttons = create_style_selection(player_style)
         classic_button = style_buttons[0]
 
 
@@ -217,42 +236,43 @@ def start_menu():
 
                 case pygame.MOUSEBUTTONDOWN:
                     if start_button.collidepoint(mouse):
-                        if start_menu_validator(player.colour, player.style):
+                        if start_menu_validator(player_colour, player_style):
                             start_menu = False
                     if exit_button.collidepoint(mouse):
                         pygame.quit()
                     if white_button.collidepoint(mouse):
-                        player.colour = "Light"
+                        player_colour = "Light"
                     if black_button.collidepoint(mouse):
-                        player.colour = "Dark"
+                        player_colour = "Dark"
                     if classic_button.collidepoint(mouse):
-                        player.style = "Classic"
+                        player_style = "Classic"
 
 
         pygame.display.update()
+    player = Player(player_colour, player_style)
     return player
 
 # MAIN FUNCTIONS -----------------------------------------------------------------------------------------
 
-def create_pieces(player):
-    pieces = []
-    for x in range(7):
-        piece = Piece(player, "Pawn")
-        pieces.append(piece)
-    for x in range(2):
-        piece = Piece(player, "Knight")
-        pieces.append(piece)
-    for x in range(2):
-        piece = Piece(player, "Bishop")
-        pieces.append(piece)
-    for x in range(2):
-        piece = Piece(player, "Rook")
-        pieces.append(piece)
-    queen = Piece(player, "Queen")
-    king = Piece(player, "King")
-
-    pieces.extend([queen, king])
-    return pieces
+#def create_pieces(player):
+#    pieces = []
+#    for x in range(7):
+#        piece = Piece(player, "Pawn")
+#        pieces.append(piece)
+#    for x in range(2):
+#        piece = Piece(player, "Knight")
+#        pieces.append(piece)
+#    for x in range(2):
+#        piece = Piece(player, "Bishop")
+#        pieces.append(piece)
+#    for x in range(2):
+#        piece = Piece(player, "Rook")
+#        pieces.append(piece)
+#    queen = Piece(player, "Queen")
+#    king = Piece(player, "King")
+#
+#    pieces.extend([queen, king])
+#    return pieces
 
     
 
@@ -279,8 +299,8 @@ def game():
 
 def main():
     player = start_menu()
+    player.pieces = player.create_pieces() 
     board = draw_board()
-    player.pieces = create_pieces(player)
     game()
 
 main()
