@@ -83,14 +83,19 @@ class Piece:
             case "King":
                 self.value = 10
         
-        # Assign sprite dynamically
+
         pygame.sprite.Sprite.__init__(self)
         wb = self.colour.split()[0].lower()
 
+        # Find correct sprite by interpolating piece data in fstring of file path. The piece's style, colour and name correspond
+        # to the filepath of the correct sprite.
+        # Filepath example: "./lib/Sprites/Pieces/{style}/{sprite file}"
+        # Sprite files have this pattern: w-pawn, b-king, w-rook, etc.
         self.image = pygame.image.load(
             f"./lib/Sprites/Pieces/{self.style.lower()}/{"w" if self.colour == "Light" else "b"}-{self.name.lower()}.png"
             ).convert_alpha()
         
+
 
         # Piece info for gameplay        
         self.square = [None, None]
