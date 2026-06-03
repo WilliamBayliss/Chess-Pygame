@@ -1,6 +1,7 @@
 import pygame
 import os
-import lib
+import fnmatch
+from pathlib import Path
 
 # Global Vars
 WIDTH, HEIGHT = 1200, 1200
@@ -58,27 +59,52 @@ class Board:
         return board
 
 class Piece:
-    def __init__(self):
-        self.player = None
-        self.value = None
+    def __init__(self, player, name):
+        
+        # Inherited player attributes
+        self.player = player
+        self.colour = player.colour
+        self.style = player.style
+
+
+        # Assign piece value based on name        
+        self.name = name
+        match name:
+            case "Pawn":
+                self.value = 1
+            case "Knight":
+                self.value = 3
+            case "Bishop":
+                self.value = 3
+            case "Rook":
+                self.value = 5
+            case "Queen":
+                self.value = 9
+            case "King":
+                self.value = 10
+        
+        # Assign sprite dynamically
+        pygame.sprite.Sprite.__init__(self)
+        wb = self.colour.split()[0].lower()
+
+        self.image = pygame.image.load(
+            f"./lib/Sprites/Pieces/{self.style.lower()}/{"w" if self.colour == "Light" else "b"}-{self.name.lower()}.png"
+            ).convert_alpha()
+        
+
+        # Piece info for gameplay        
         self.square = [None, None]
-        self.colour = None
-        self.sprite = None
         self.moved = False
-        self.available_moves = None
+        self.legal_moves = []
+        self.illegal_moves = []
+        
 
-#MAIN FUNCTIONS ----------------------------------------------------------------------------------------------------------
+            
 
-# Create instance of board class and draw board on screen
-def draw_board():
-    board = Board()
-    for row in board.grid:
-        row_index = board.grid.index(row)
-        for square in row:
-            col_index = row.index(square)
-            pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size)) 
-    pygame.display.set_caption("Chessboard")
-    return board
+        
+
+# START MENU FUNCTIONS ----------------------------------------------------------------------------------------------------------
+
 
 def create_colour_selection(colour):
     mouse = pygame.mouse.get_pos()
@@ -142,10 +168,12 @@ def start_menu_validator(colour, style):
     else:
         return False
 
-
+# Runs start menu where player can customize their pieces, the board, and the rules of the game
 def start_menu():
     player = Player()
-    while True:
+    
+    start_menu = True
+    while start_menu == True:
         screen.fill(LIGHT)
         mouse = pygame.mouse.get_pos()
 
@@ -178,14 +206,14 @@ def start_menu():
                             player_name = player_name[:-1]
                         case pygame.K_RETURN:
                             if start_menu_validator(player.colour, player.style):
-                                game()
+                                start_menu == False
                         case _:
                             player_name += event.unicode
 
                 case pygame.MOUSEBUTTONDOWN:
                     if start_button.collidepoint(mouse):
                         if start_menu_validator(player.colour, player.style):
-                            game()
+                            start_menu = False
                     if exit_button.collidepoint(mouse):
                         pygame.quit()
                     if white_button.collidepoint(mouse):
@@ -197,6 +225,42 @@ def start_menu():
 
 
         pygame.display.update()
+    return player
+
+# MAIN FUNCTIONS -----------------------------------------------------------------------------------------
+
+def create_pieces(player):
+    pieces = []
+    for x in range(7):
+        piece = Piece(player, "Pawn")
+        pieces.append(piece)
+    for x in range(2):
+        piece = Piece(player, "Knight")
+        pieces.append(piece)
+    for x in range(2):
+        piece = Piece(player, "Bishop")
+        pieces.append(piece)
+    for x in range(2):
+        piece = Piece(player, "Rook")
+        pieces.append(piece)
+    queen = Piece(player, "Queen")
+    king = Piece(player, "King")
+
+    pieces.extend([queen, king])
+    return pieces
+
+    
+
+# Create instance of board class and draw board on screen
+def draw_board():
+    board = Board()
+    for row in board.grid:
+        row_index = board.grid.index(row)
+        for square in row:
+            col_index = row.index(square)
+            pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size)) 
+    pygame.display.set_caption("Chessboard")
+    return board
 
 def game():
     running = True
@@ -204,9 +268,14 @@ def game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        board = draw_board()
         pygame.display.update()
 
     pygame.quit()
 
-start_menu()
+def main():
+    player = start_menu()
+    board = draw_board()
+    player.pieces = create_pieces(player)
+    game()
+
+main()
