@@ -30,24 +30,75 @@ class Player:
         self.pieces = self.create_pieces()
 
     def create_pieces(self):
-        pieces = []
+        pieces = {
+            "Pawn": [],
+            "Knight": [],
+            "Bishop": [],
+            "Rook": [],
+            "Queen": [],
+            "King": [],
+        }
         for x in range(7):
             piece = Piece(self, "Pawn")
-            pieces.append(piece)
+            pieces["Pawn"].append(piece)
         for x in range(2):
             piece = Piece(self, "Knight")
-            pieces.append(piece)
+            pieces["Knight"].append(piece)
         for x in range(2):
             piece = Piece(self, "Bishop")
-            pieces.append(piece)
+            pieces["Bishop"].append(piece)
         for x in range(2):
             piece = Piece(self, "Rook")
-            pieces.append(piece)
+            pieces["Rook"].append(piece)
+        
         queen = Piece(self, "Queen")
-        king = Piece(self, "King")
+        pieces["Queen"].append(queen)
 
-        pieces.extend([queen, king])
-        self.pieces = pieces
+        king = Piece(self, "King")
+        pieces["King"].append(king)
+        return pieces
+    
+    def muster_armies(self, board):
+        if self.colour == "Light":
+            front_line = board.board_data[6]
+            back_line = board.board_data[7]
+        elif self.colour == "Dark":
+            front_line = board.board_data[1]
+            back_line = board.board_data[0]
+        
+        for pawn in self.pieces["Pawn"]:
+            for square in front_line:
+                pawn.square = square
+                square.piece = pawn
+        for knight in self.pieces["Knight"]:
+            if back_line[1].piece is None:
+                knight.square = back_line[1]
+                back_line[1].piece = knight
+            elif back_line[6] is None:
+                knight.square = back_line[6]
+                back_line[6].piece = knight
+        for bishop in self.pieces["Bishop"]:
+            if back_line[2].piece is None:
+                bishop.square = back_line[1]
+                back_line[2].piece = bishop
+            elif back_line[5] is None:
+                bishop.square = back_line[5]
+                back_line[5].piece = bishop
+        for rook in self.pieces["Rook"]:
+            if back_line[0].piece is None:
+                rook.square = back_line[1]
+                back_line[0].piece = rook
+            elif back_line[7] is None:
+                rook.square = back_line[5]
+                back_line[7].piece = rook
+
+        self.pieces["Queen"][0].square = back_line[3]
+        back_line[3].square = self.pieces["Queen"][0]
+
+        self.pieces["King"][0].square = back_line[4]   
+        back_line[4].piece = self.pieces["King"][0]         
+        
+        
 
 class Square:
     def __init__(self):
@@ -55,13 +106,14 @@ class Square:
         self.y = None
         self.colour = None
         self.size = None
+        self.piece = None
 
 class Board:
     def __init__(self):
-        self.board_data = self.create_board()
+        self.board_data = self.initialize_board_data()
     # Create 2D array with 8 subarrays each having 8 instances of Square class; set Square properties
     # Sets Square colour using sum of coordinates modulo 2: if remainder 0 Squares are light coloured
-    def create_board(self):
+    def initialize_board_data(self):
         board = []
         for x in range(8):
             row = []
@@ -77,6 +129,11 @@ class Board:
                 row.append(square)
             board.append(row)
         return board
+
+
+
+
+
     
     def draw_board(self):
         for row in self.board_data:
@@ -84,16 +141,30 @@ class Board:
             for square in row:
                 col_index = row.index(square)
                 pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size))
+                if square.piece is not None:
+                    sprite = square.piece.image
+                    sprite_rect = sprite.get_rect()
+                    sprite_rect.topleft = (col_index * square.size, row_index * square.size)
+                    screen.blit(sprite, sprite_rect)
+                    pygame.display.update()
+                else: 
+                    print("NO PIECE")
+
+
+
         pygame.display.set_caption("Chessboard")
 
-    def place_pieces():
-        True
+    def reset_board(self):
+        self.board_data = self.initialize_board_data()
+        self.draw_board() 
         
 
+       
 
 class Piece:
-    def __init__(self, player, name):
-        
+    def __init__(self, player, name, square=None):
+        self.square = square if square is not None else None
+
         # Inherited player attributes
         self.player = player
         self.colour = player.colour
@@ -131,7 +202,7 @@ class Piece:
 
 
         # Piece info for gameplay        
-        self.square = [None, None]
+        self.square = None
         self.moved = False
         self.legal_moves = []
         self.illegal_moves = []
@@ -278,8 +349,8 @@ def game():
 
 def main():
     player = start_menu()
-    player.pieces = player.create_pieces() 
     board = Board()
+    player.muster_armies(board)
     board.draw_board()
     game()
 
