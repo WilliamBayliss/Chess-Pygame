@@ -52,7 +52,6 @@ class Player:
 
         king = Piece(self, "King")
         pieces["King"].append(king)
-        print(pieces)
         return pieces
     
     def muster_armies(self, board):
@@ -352,8 +351,12 @@ def game():
 
 def main():
     player = start_menu()
+    enemy = Player("Dark" if player.colour == "Light" else "Light", player.style)
+
     board = Board()
+
     player.muster_armies(board)
+    enemy.muster_armies(board)
     board.draw_board()
     game()
 
