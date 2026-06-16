@@ -39,23 +39,20 @@ class Player:
             "King": [],
         }
         for x in range(7):
-            piece = Piece(self, "Pawn")
-            pieces["Pawn"].append(piece)
+            pieces["Pawn"].append(Piece(self, "Pawn"))
         for x in range(2):
-            piece = Piece(self, "Knight")
-            pieces["Knight"].append(piece)
+            pieces["Knight"].append(Piece(self, "Knight"))
         for x in range(2):
-            piece = Piece(self, "Bishop")
-            pieces["Bishop"].append(piece)
+            pieces["Bishop"].append(Piece(self, "Bishop"))
         for x in range(2):
-            piece = Piece(self, "Rook")
-            pieces["Rook"].append(piece)
+            pieces["Rook"].append(Piece(self, "Rook"))
         
         queen = Piece(self, "Queen")
         pieces["Queen"].append(queen)
 
         king = Piece(self, "King")
         pieces["King"].append(king)
+        print(pieces)
         return pieces
     
     def muster_armies(self, board):
@@ -70,34 +67,40 @@ class Player:
             for square in front_line:
                 pawn.square = square
                 square.piece = pawn
+
         for knight in self.pieces["Knight"]:
             if back_line[1].piece is None:
                 knight.square = back_line[1]
                 back_line[1].piece = knight
-            elif back_line[6] is None:
+            elif back_line[6].piece is None:
                 knight.square = back_line[6]
                 back_line[6].piece = knight
+
         for bishop in self.pieces["Bishop"]:
             if back_line[2].piece is None:
                 bishop.square = back_line[1]
                 back_line[2].piece = bishop
-            elif back_line[5] is None:
+            elif back_line[5].piece is None:
                 bishop.square = back_line[5]
                 back_line[5].piece = bishop
+
         for rook in self.pieces["Rook"]:
             if back_line[0].piece is None:
-                rook.square = back_line[1]
+                rook.square = back_line[0]
                 back_line[0].piece = rook
-            elif back_line[7] is None:
-                rook.square = back_line[5]
+            elif back_line[7].piece is None:
+                rook.square = back_line[7]
                 back_line[7].piece = rook
 
-        self.pieces["Queen"][0].square = back_line[3]
-        back_line[3].square = self.pieces["Queen"][0]
+        for queen in self.pieces["Queen"]:
+            if back_line[3].piece is None:
+                queen.square = back_line[3]
+                back_line[3].piece = queen
 
-        self.pieces["King"][0].square = back_line[4]   
-        back_line[4].piece = self.pieces["King"][0]         
-        
+        for king in self.pieces["King"]:
+            if back_line[4].piece is None:
+                king.square = back_line[4]
+                back_line[4].piece = king
         
 
 class Square:
@@ -140,15 +143,15 @@ class Board:
             row_index = self.board_data.index(row)
             for square in row:
                 col_index = row.index(square)
-                pygame.draw.rect(screen, square.colour, (col_index * square.size, row_index * square.size, square.size, square.size))
+                square_rect = pygame.Rect(col_index * square.size, row_index * square.size, square.size, square.size)
+                pygame.draw.rect(screen, square.colour, square_rect)
                 if square.piece is not None:
                     sprite = square.piece.image
+                    sprite = pygame.transform.scale(sprite, square_rect.size)
                     sprite_rect = sprite.get_rect()
-                    sprite_rect.topleft = (col_index * square.size, row_index * square.size)
+                    sprite_rect.center = square_rect.center
                     screen.blit(sprite, sprite_rect)
                     pygame.display.update()
-                else: 
-                    print("NO PIECE")
 
 
 
